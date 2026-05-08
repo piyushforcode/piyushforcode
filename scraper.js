@@ -32,24 +32,25 @@ async function startScraping() {
 
 async function scraper() {
 	
-	await new Promise(res => setTimeout(res, 2000));
+	await new Promise(res => setTimeout(res, 500));
 	
     const qcNodes = document.querySelectorAll(".question-component");
     for (const node of qcNodes) {
         const question = node.querySelector('[class="question xl:text-lg px-4 py-2.5"]').innerHTML;
-		const op = node.getElementsByClassName("options")[0].querySelectorAll(".grow.question");
+		const ops = node.getElementsByClassName("options");
 		const ansButton = [...node.querySelectorAll('button')].find(el => el.innerText.includes('Check Answer'));
 		ansButton.click();
 		
-        await new Promise(res => setTimeout(res, 1000));
+        await new Promise(res => setTimeout(res, 300));
 		
-		if (op.length==0) {
+		if (ops.length === 0) {
 			qType = "numerical";
 			options = null;
 			ansText = [...node.querySelectorAll('div')].find(el => el.innerText.includes('Correct answer is')).innerText;
 			answer = ansText.match(/[\d.]+/)[0];
 			solution = [...node.querySelectorAll('h2')].find(el => el.innerText.includes('Explanation'))?.nextElementSibling?.innerHTML || "N/A";
 		} else {
+			const op = ops[0].querySelectorAll(".grow.question");
 			qType = "mcq";
 			options = [];
 			op.forEach((el) => options.push(el.innerText));
